@@ -57,13 +57,11 @@ class Object(object):
         '''
         previous_speed = numpy.linalg.norm(self.velocity)
 
-        # inductively calculate velocity
-        for i in range(2):
-            self.velocity += .5 * self.acceleration * dt
+        self.velocity += .5 * self.acceleration * dt
         self.sum_of_forces = self.constant_forces
 
         if self.affected_by_gravity:
-            self.sum_of_forces = self.sum_of_forces + gravity_force(self)
+            self.sum_of_forces = self.sum_of_forces + manager.gravity_force(self)
         self.acceleration = self.sum_of_forces / self.mass
 
         self.velocity = self.velocity + .5 * self.acceleration * dt
@@ -95,12 +93,12 @@ class Collisions(object):
         self.gross_intersect = 0.01
         self.fine_intersect = 0.001
 
-    def register_object(self, o):
+    def register(self, o):
         '''
         Add object to max and min lists
         '''
         for index, dimension in enumerate(self.extrema):
-            # The additional .01 is so the collision detector will pick up
+            # The tolerance is so the collision detector will pick up
             # objects that are just barely touching.
             object_max = o.position[index] + o.radius + self.tolerance
             object_min = o.position[index] - o.radius - self.tolerance
@@ -181,7 +179,7 @@ class Collisions(object):
                 if (potential_x_collision in potential_y_collisions and
                         potential_x_collision in potential_z_collisions):
 
-                    potential_collisions.append(potentially_colliding_pair)
+                    potential_collisions.append(potential_x_collision)
 
             return potential_collisions
 
@@ -305,7 +303,7 @@ class Collisions(object):
                 o_2.velocity = e * computed_velocity_before_e
 
         while self.colliding_pairs:
-            pair = colliding_pairs.pop()
+            pair = self.colliding_pairs.pop()
             o_1, o_2 = pair
             apply_impulse(o_1, o_2)
 
@@ -356,7 +354,7 @@ class Manager(object):
         force = numpy.array([[0.], [0.], [0.]])
         for gravity_object in self.objects:
             if gravity_object.gravity_source:
-                force += calculate_gravitational_force(gravity_object, o)
+                force += calculate_force(gravity_object, o)
 
         return force
 

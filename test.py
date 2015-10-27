@@ -55,7 +55,7 @@ def test_1():
         rate(60)
 
         for j in xrange(1):
-            physics.go_forward_one_time_step()
+            physics.manager.time_step()
 
         for set_of_objects in objects_and_visual_pairs:
             set_of_objects[1].pos = set_of_objects[0].position

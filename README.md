@@ -8,3 +8,4 @@ The job of the physics manager is to:
 2. Move all the objects in space through integrating acceleration
 3. Handle intersecting objects by moving them back until they are no longer intersecting
 4. Calculate and apply impulses to colliding objects
+
