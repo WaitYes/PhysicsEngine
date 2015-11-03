@@ -273,39 +273,36 @@ class Collisions(object):
         '''
         Resolve all collisions
         '''
-        def apply_impulse(o_1, o_2):
-            '''
-            Apply impulse to colling objects
-            '''
+        def collision_first_part(o_1, o_2):
             contact_normal_not_unit = o_1.position - o_2.position
             contact_normal = contact_normal_not_unit / numpy.linalg.norm(contact_normal_not_unit)
-            o_0_relative_velocity = numpy.dot(numpy.transpose(o_1.velocity), contact_normal) * contact_normal
-            o_1_relative_velocity = numpy.dot(numpy.transpose(o_2.velocity), contact_normal) * contact_normal
+            o_1_relative_velocity = numpy.dot(numpy.transpose(o_1.velocity), contact_normal) * contact_normal
+            o_2_relative_velocity = numpy.dot(numpy.transpose(o_2.velocity), contact_normal) * contact_normal
 
-            velocity_difference = o_0_relative_velocity - o_1_relative_velocity
+            velocity_difference = o_1_relative_velocity - o_2_relative_velocity
 
             if numpy.dot(numpy.transpose(velocity_difference), contact_normal) >= 0:
-                pass
+                is_colliding = True
+            else:
+                is_colliding = False
 
-            elif o_1.movable and o_2.movable:
+            collision_information = {'o_1' : o_1, 'o_2' : o_2, 'contact_normal' : contact_normal,
+                                     'o_1_relative_velocity' : o_1_relative_velocity, 'o_2_relative_velocity' : o_2_relative_velocity,
+                                     'velocity_difference':velocity_difference, 'is_colliding':is_colliding}
+            return collision_information
 
-                impulse = (1 + e) * velocity_difference * ((o_1.mass * o_2.mass) / (o_1.mass + o_2.mass))
+        colliding_objects = set()
+        initial_collision_table = []
 
-                o_1.velocity -= impulse/o_1.mass
-                o_2.velocity += impulse/o_2.mass
+        for pair in  self.colliding_pairs:
+            o_1 = pair[0]
+            o_2 = pair[1]
+            colliding_objects.add(o_1)
+            colliding_objects.add(o_2)
+            collision_information = collision_first_part(o_1, o_2)
+            initial_collision_table.append(collision_information)
 
-            elif o_1.movable:
-                computed_velocity_before_e = -2*o_0_relative_velocity + o_1.velocity
-                o_1.velocity = e * computed_velocity_before_e
 
-            elif o_2.movable:
-                computed_velocity_before_e = -2*o_1_relative_velocity + o_2.velocity
-                o_2.velocity = e * computed_velocity_before_e
-
-        while self.colliding_pairs:
-            pair = self.colliding_pairs.pop()
-            o_1, o_2 = pair
-            apply_impulse(o_1, o_2)
 
 
 class Manager(object):

@@ -211,7 +211,7 @@ def test_5():
     '''
     run the fifth test
     '''
-    scene.range = 1
+    scene.range = 10
     scene.center = (0,0,0)
 
     objects_and_visual_pairs = []
@@ -226,10 +226,10 @@ def test_5():
 
         objects_and_visual_pairs.append([space_object, created_sphere])
 
-    object1 = physics.Object(position = numpy.array([[50.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
-                             radius = 50., mass = 10., gravity_source=True)
-    object2 = physics.Object(position = numpy.array([[-5.], [0.], [0.]]), velocity = numpy.array([[2.], [0.], [0.]]),
-                             radius = .005, mass = 1.)
+    object1 = physics.Object(position = numpy.array([[5.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
+                             radius = 5., mass = 10., gravity_source=True)
+    object2 = physics.Object(position = numpy.array([[-5.], [0.], [0.]]), velocity = numpy.array([[50.], [0.], [0.]]),
+                             radius = .1, mass = 1.)
     # object3 = physics.Object(position = numpy.array([[-250.], [0.], [4.]]), velocity = numpy.array([[50.], [0.], [0.]]),
     #                          radius = 50., mass = 5.)
 
