@@ -127,7 +127,8 @@ def test_3():
 
     for i in xrange(1):
         position = numpy.array([[30.], [0.], [0.]])
-        velocity = numpy.array([[0.], [18.], [0.]])
+        #velocity = numpy.array([[0.], [18.], [0.]])
+        velocity = numpy.array([[0.], [0.], [0.]])
         radius = 1.
         mass = 10.
         new_object = physics.Object(position, velocity, radius, mass)
@@ -211,8 +212,8 @@ def test_5():
     '''
     run the fifth test
     '''
-    scene.range = 1
-    scene.center = (0,0,0)
+    # scene.range = 1
+    # scene.center = (0,0,0)
 
     objects_and_visual_pairs = []
 
@@ -226,10 +227,10 @@ def test_5():
 
         objects_and_visual_pairs.append([space_object, created_sphere])
 
-    object1 = physics.Object(position = numpy.array([[50.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
-                             radius = 50., mass = 10., gravity_source=True)
-    object2 = physics.Object(position = numpy.array([[-5.], [0.], [0.]]), velocity = numpy.array([[2.], [0.], [0.]]),
-                             radius = .005, mass = 1.)
+    object1 = physics.Object(position = numpy.array([[5.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
+                             radius = 5., mass = 1., gravity_source=True)
+    object2 = physics.Object(position = numpy.array([[-25.], [0.], [0.]]), velocity = numpy.array([[10.], [0.], [0.]]),
+                             radius = 5., mass = 1.)
     # object3 = physics.Object(position = numpy.array([[-250.], [0.], [4.]]), velocity = numpy.array([[50.], [0.], [0.]]),
     #                          radius = 50., mass = 5.)
 

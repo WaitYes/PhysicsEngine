@@ -88,7 +88,7 @@ class Collisions(object):
         # Used for the grid collision detection method. Keeps track of how far
         # along each dimension each object extends.
         self.extrema = ([], [], [])
-        self.colliding_pairs = []
+        self.colliding_pairs = set()
         self.tolerance = 0.005
         self.gross_intersect = 0.01
         self.fine_intersect = 0.001
@@ -267,7 +267,7 @@ class Collisions(object):
                     else:
                         o_1.influenced_by_non_gravity_source = True
 
-                    self.colliding_pairs.append((o_1, o_2))
+                    self.colliding_pairs.add((o_1, o_2))
 
     def resolve(self):
         '''
@@ -278,7 +278,6 @@ class Collisions(object):
             contact_normal = contact_normal_not_unit / numpy.linalg.norm(contact_normal_not_unit)
             o_1_relative_velocity = numpy.dot(numpy.transpose(o_1.velocity), contact_normal) * contact_normal
             o_2_relative_velocity = numpy.dot(numpy.transpose(o_2.velocity), contact_normal) * contact_normal
-
             velocity_difference = o_1_relative_velocity - o_2_relative_velocity
 
             if numpy.dot(numpy.transpose(velocity_difference), contact_normal) >= 0:
@@ -286,8 +285,8 @@ class Collisions(object):
             else:
                 is_colliding = True
 
-            o_1_relative_momentum = o_1.mass * o_1_relative_velocity
-            o_2_relative_momentum = o_2.mass * o_2_relative_velocity
+            o_1_relative_momentum = o_1.mass * velocity_difference
+            o_2_relative_momentum = o_2.mass * -1. * velocity_difference
 
             collision_information = {'o_1' : o_1, 'o_2' : o_2, 'o_1_relative_velocity' : o_1_relative_velocity,
                                      'o_2_relative_velocity' : o_2_relative_velocity,
@@ -348,22 +347,22 @@ class Collisions(object):
                     total_incoming_momentum += effective_velocity_row['o_1_effective_momentum']
 
             for effective_velocity_row in effective_velocity_table:
-                if not numpy.array_equal(total_incoming_momentum,numpy.array([[0.], [0.], [0.]])):
-                    if o == effective_velocity_row['o_1']:
-                        print(total_incoming_momentum)
-                        percentage = effective_velocity_row['o_2_effective_momentum'] / total_incoming_momentum
-                        effective_velocity_row['o_1_effective_momentum'] *= percentage
-                        effective_velocity_row['o_1_effective_velocity'] *= percentage
-                    elif o == effective_velocity_row['o_2']:
-                        print(total_incoming_momentum)
-                        percentage = effective_velocity_row['o_1_effective_momentum'] / total_incoming_momentum
-                        effective_velocity_row['o_2_effective_momentum'] *= percentage
-                        effective_velocity_row['o_2_effective_velocity'] *= percentage
+
+                for component in total_incoming_momentum:
+                    if component[0] == 0.:
+                        component[0] = 1.
+                if o == effective_velocity_row['o_1']:
+                    percentage = effective_velocity_row['o_2_effective_momentum'] / total_incoming_momentum
+                    effective_velocity_row['o_1_effective_momentum'] *= percentage
+                    effective_velocity_row['o_1_effective_velocity'] *= percentage
+                elif o == effective_velocity_row['o_2']:
+                    percentage = effective_velocity_row['o_1_effective_momentum'] / total_incoming_momentum
+                    effective_velocity_row['o_2_effective_momentum'] *= percentage
+                    effective_velocity_row['o_2_effective_velocity'] *= percentage
 
                     apply_impulse(effective_velocity_row)
 
-            self.colliding_pairs = []
-
+            self.colliding_pairs = set()
 
 
 class Manager(object):
