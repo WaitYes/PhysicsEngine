@@ -170,7 +170,7 @@ def test_4():
     '''
     objects_and_visual_pairs = []
 
-    for i in xrange(10):
+    for i in xrange(20):
         position = numpy.random.uniform(-50, 50, (3,1))
         velocity = numpy.random.uniform(0, 0, (3,1))
         radius = 1
@@ -274,14 +274,14 @@ def test_6():
                              radius = 5., mass = 5.)
     object5 = physics.Object(position = numpy.array([[-30.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
                              radius = 5., mass = 5.)
-    object6 = physics.Object(position = numpy.array([[-40.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
-                                     radius = 5., mass = 5.)
-    object7 = physics.Object(position = numpy.array([[-50.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
-                             radius = 5., mass = 5.)
-    object8 = physics.Object(position = numpy.array([[-60.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
-                             radius = 5., mass = 5.)
-    object9 = physics.Object(position = numpy.array([[-70.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
-                             radius = 5., mass = 5.)
+    # object6 = physics.Object(position = numpy.array([[-40.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
+    #                                  radius = 5., mass = 5.)
+    # object7 = physics.Object(position = numpy.array([[-50.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
+    #                          radius = 5., mass = 5.)
+    # object8 = physics.Object(position = numpy.array([[-60.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
+    #                          radius = 5., mass = 5.)
+    # object9 = physics.Object(position = numpy.array([[-70.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
+    #                          radius = 5., mass = 5.)
     object10 = physics.Object(position = numpy.array([[50.], [0.], [0.]]), velocity = numpy.array([[-50.], [0.], [0.]]),
                               radius = 5., mass = 5.)
 
@@ -290,10 +290,10 @@ def test_6():
     create_sphere_visual(object3, color.green)
     create_sphere_visual(object4, color.green)
     create_sphere_visual(object5, color.green)
-    create_sphere_visual(object6, color.green)
-    create_sphere_visual(object7, color.green)
-    create_sphere_visual(object8, color.green)
-    create_sphere_visual(object9, color.green)
+    # create_sphere_visual(object6, color.green)
+    # create_sphere_visual(object7, color.green)
+    # create_sphere_visual(object8, color.green)
+    # create_sphere_visual(object9, color.green)
     create_sphere_visual(object10, color.orange)
 
     for i in xrange(30000):
