@@ -77,7 +77,7 @@ def test_2():
 
         objects_and_visual_pairs.append([space_object, created_sphere])
 
-    object1 = physics.Object(position = numpy.array([[0.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
+    object1 = physics.Object(position = numpy.array([[2.], [0.], [0.]]), velocity = numpy.array([[0.], [0.], [0.]]),
                              radius = 5., mass = 10., gravity_source=True)
     object2 = physics.Object(position = numpy.array([[10.], [0.], [0.]]), velocity = numpy.array([[-50.], [0.], [0.]]),
                              radius = 1., mass = 1.)

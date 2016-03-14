@@ -50,6 +50,8 @@ class Object(object):
         '''
         # Uses Velocity Verlet integration method
         self.position += self.velocity * dt + .5 * self.acceleration * dt * dt
+        print self
+        print self.velocity
 
     def calculate_velocity(self):
         '''
@@ -293,80 +295,85 @@ class Collisions(object):
             elif o_1.movable:
                 computed_velocity_before_e = -2*collision_table_row['o_1_effective_velocity'] + o_1.velocity
                 o_1.velocity = e * computed_velocity_before_e
+                
 
             elif o_2.movable:
                 computed_velocity_before_e = -2*collision_table_row['o_2_effective_velocity'] + o_2.velocity
                 o_2.velocity = e * computed_velocity_before_e
 
+
         colliding_objects = set()
         collision_table = []
 
-        for pair in self.colliding_pairs:
-            o_1 = pair[0]
-            o_2 = pair[1]
-            colliding_objects.add(o_1)
-            colliding_objects.add(o_2)
+        collisions = True
+        while collisions:
+            collisions = False
+            for pair in self.colliding_pairs:
+                o_1 = pair[0]
+                o_2 = pair[1]
+                colliding_objects.add(o_1)
+                colliding_objects.add(o_2)
 
-            contact_normal_not_unit = o_1.position - o_2.position
-            contact_normal = contact_normal_not_unit / numpy.linalg.norm(contact_normal_not_unit)
-            o_1_relative_velocity = numpy.dot(numpy.transpose(o_1.velocity), contact_normal) * contact_normal
-            o_2_relative_velocity = numpy.dot(numpy.transpose(o_2.velocity), contact_normal) * contact_normal
-            velocity_difference = o_1_relative_velocity - o_2_relative_velocity
+                contact_normal_not_unit = o_1.position - o_2.position
+                contact_normal = contact_normal_not_unit / numpy.linalg.norm(contact_normal_not_unit)
+                o_1_relative_velocity = numpy.dot(numpy.transpose(o_1.velocity), contact_normal) * contact_normal
+                o_2_relative_velocity = numpy.dot(numpy.transpose(o_2.velocity), contact_normal) * contact_normal
+                velocity_difference = o_1_relative_velocity - o_2_relative_velocity
 
-            if numpy.dot(numpy.transpose(velocity_difference), contact_normal) >= 0:
-                is_colliding = False
-            else:
-                is_colliding = True
+                if numpy.dot(numpy.transpose(velocity_difference), contact_normal) >= 0:
+                    is_colliding = False
+                    o_1_relative_momentum = numpy.array([[0.], [0.], [0.]])
+                    o_2_relative_momentum = numpy.array([[0.], [0.], [0.]])
+                else:
+                    is_colliding = True
+                    o_1_relative_momentum = o_1.mass * velocity_difference
+                    o_2_relative_momentum = o_2.mass * -1. * velocity_difference
+                    collisions = True
+                    print 'Hit2'
 
-            if is_colliding:
-                o_1_relative_momentum = o_1.mass * velocity_difference
-                o_2_relative_momentum = o_2.mass * -1. * velocity_difference
-            else:
-                o_1_relative_momentum = numpy.array([[0.], [0.], [0.]])
-                o_2_relative_momentum = numpy.array([[0.], [0.], [0.]])
 
-            collision_row = {'o_1' : o_1,
-                                'o_2' : o_2,
-                                'contact_normal' : contact_normal,
-                                'is_colliding' : is_colliding,
-                                'o_1_relative_velocity' : o_1_relative_velocity,
-                                'o_2_relative_velocity' : o_2_relative_velocity,
-                                'o_1_relative_momentum' : o_1_relative_momentum,
-                                'o_2_relative_momentum' : o_2_relative_momentum,
-                                'o_1_effective_velocity' : o_1_relative_velocity,
-                                'o_2_effective_velocity': o_2_relative_velocity,
-                                'o_1_effective_momentum' : o_1_relative_momentum,
-                                'o_2_effective_momentum' : o_2_relative_momentum}
+                collision_row = {'o_1' : o_1,
+                                    'o_2' : o_2,
+                                    'contact_normal' : contact_normal,
+                                    'is_colliding' : is_colliding,
+                                    'o_1_relative_velocity' : o_1_relative_velocity,
+                                    'o_2_relative_velocity' : o_2_relative_velocity,
+                                    'o_1_relative_momentum' : o_1_relative_momentum,
+                                    'o_2_relative_momentum' : o_2_relative_momentum,
+                                    'o_1_effective_velocity' : o_1_relative_velocity,
+                                    'o_2_effective_velocity': o_2_relative_velocity,
+                                    'o_1_effective_momentum' : o_1_relative_momentum,
+                                    'o_2_effective_momentum' : o_2_relative_momentum}
 
-            collision_table.append(collision_row)
+                collision_table.append(collision_row)
 
-        for o in colliding_objects:
-            total_incoming_momentum = numpy.array([[0.], [0.], [0.]])
+            for o in colliding_objects:
+                total_incoming_momentum = numpy.array([[0.], [0.], [0.]])
+                for collision_table_row in collision_table:
+
+                    if o == collision_table_row['o_1'] and collision_table_row['is_colliding']:
+                        total_incoming_momentum += collision_table_row['o_2_effective_momentum']
+                    elif o == collision_table_row['o_2'] and collision_table_row['is_colliding']:
+                        total_incoming_momentum += collision_table_row['o_1_effective_momentum']
+
+                for collision_table_row in collision_table:
+
+                    for component in total_incoming_momentum:
+                        if component[0] == 0.:
+                            component[0] = 1.
+                    if o == collision_table_row['o_1']:
+                        percentage = collision_table_row['o_2_effective_momentum'] / total_incoming_momentum
+                        collision_table_row['o_1_effective_momentum'] *= percentage
+                        collision_table_row['o_1_effective_velocity'] *= percentage
+                    elif o == collision_table_row['o_2']:
+                        percentage = collision_table_row['o_1_effective_momentum'] / total_incoming_momentum
+                        collision_table_row['o_2_effective_momentum'] *= percentage
+                        collision_table_row['o_2_effective_velocity'] *= percentage
+
             for collision_table_row in collision_table:
+                apply_impulse(collision_table_row)
 
-                if o == collision_table_row['o_1'] and collision_table_row['is_colliding']:
-                    total_incoming_momentum += collision_table_row['o_2_effective_momentum']
-                elif o == collision_table_row['o_2'] and collision_table_row['is_colliding']:
-                    total_incoming_momentum += collision_table_row['o_1_effective_momentum']
-
-            for collision_table_row in collision_table:
-
-                for component in total_incoming_momentum:
-                    if component[0] == 0.:
-                        component[0] = 1.
-                if o == collision_table_row['o_1']:
-                    percentage = collision_table_row['o_2_effective_momentum'] / total_incoming_momentum
-                    collision_table_row['o_1_effective_momentum'] *= percentage
-                    collision_table_row['o_1_effective_velocity'] *= percentage
-                elif o == collision_table_row['o_2']:
-                    percentage = collision_table_row['o_1_effective_momentum'] / total_incoming_momentum
-                    collision_table_row['o_2_effective_momentum'] *= percentage
-                    collision_table_row['o_2_effective_velocity'] *= percentage
-
-        for collision_table_row in collision_table:
-            apply_impulse(collision_table_row)
-
-        self.colliding_pairs = set()
+            self.colliding_pairs = set()
 
 
 
