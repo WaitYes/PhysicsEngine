@@ -50,8 +50,7 @@ class Object(object):
         '''
         # Uses Velocity Verlet integration method
         self.position += self.velocity * dt + .5 * self.acceleration * dt * dt
-        print self
-        print self.velocity
+
 
     def calculate_velocity(self):
         '''
@@ -295,18 +294,17 @@ class Collisions(object):
             elif o_1.movable:
                 computed_velocity_before_e = -2*collision_table_row['o_1_effective_velocity'] + o_1.velocity
                 o_1.velocity = e * computed_velocity_before_e
-                
 
             elif o_2.movable:
                 computed_velocity_before_e = -2*collision_table_row['o_2_effective_velocity'] + o_2.velocity
                 o_2.velocity = e * computed_velocity_before_e
 
 
-        colliding_objects = set()
-        collision_table = []
-
         collisions = True
         while collisions:
+            colliding_objects = set()
+            collision_table = []
+
             collisions = False
             for pair in self.colliding_pairs:
                 o_1 = pair[0]
@@ -329,7 +327,6 @@ class Collisions(object):
                     o_1_relative_momentum = o_1.mass * velocity_difference
                     o_2_relative_momentum = o_2.mass * -1. * velocity_difference
                     collisions = True
-                    print 'Hit2'
 
 
                 collision_row = {'o_1' : o_1,
