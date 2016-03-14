@@ -299,13 +299,13 @@ class Collisions(object):
                 computed_velocity_before_e = -2*collision_table_row['o_2_effective_velocity'] + o_2.velocity
                 o_2.velocity = e * computed_velocity_before_e
 
-
         collisions = True
         while collisions:
+            collisions = False
+
             colliding_objects = set()
             collision_table = []
 
-            collisions = False
             for pair in self.colliding_pairs:
                 o_1 = pair[0]
                 o_2 = pair[1]
@@ -368,9 +368,10 @@ class Collisions(object):
                         collision_table_row['o_2_effective_velocity'] *= percentage
 
             for collision_table_row in collision_table:
-                apply_impulse(collision_table_row)
+                if collision_table_row['is_colliding']:
+                    apply_impulse(collision_table_row)
 
-            self.colliding_pairs = set()
+        self.colliding_pairs = set()
 
 
 
