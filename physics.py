@@ -51,8 +51,7 @@ class Object(object):
         # Uses Velocity Verlet integration method
         self.position += self.velocity * dt + .5 * self.acceleration * dt * dt
 
-
-    def calculate_velocity(self):
+    def reset(self):
         '''
         Calculate object velocity
         '''
@@ -204,8 +203,8 @@ class Collisions(object):
             # 2*(radius) = magnitude(difference in positions + difference in velocity * time)
             # and we are solving for time.
 
-            o_1_velocity = o_1.velocity
-            o_2_velocity = o_2.velocity
+            o_1_velocity = o_1.velocity + .5 * o_1.acceleration * dt
+            o_2_velocity = o_2.velocity + .5 * o_2.acceleration * dt
 
             vector_between_centers = o_1.position - o_2.position
 
@@ -440,6 +439,6 @@ class Manager(object):
         '''
         for o in self.objects:
             if o.movable:
-                o.calculate_velocity()
+                o.reset()
 
 manager = Manager()

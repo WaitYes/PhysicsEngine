@@ -6,7 +6,6 @@ __author__ = 'Jacob'
 from argparse import ArgumentParser,ArgumentTypeError,ArgumentDefaultsHelpFormatter
 import numpy
 from visual import *
-
 import physics
 
 
@@ -135,15 +134,15 @@ def test_3():
         new_visualization = create_sphere_visual(new_object, color.white, radius)
         objects_and_visual_pairs.append([new_object, new_visualization])
 
-    for i in xrange(0):
-        position = numpy.random.uniform(-25, 25, (3,1))
-        velocity = numpy.random.uniform(-10, 10, (3,1))
-        radius = numpy.random.uniform(1, 5)
-        mass = numpy.random.uniform(1, 10)
-        new_object = physics.Object(position, velocity, radius, mass, affected_by_gravity=False)
-        new_visualization = create_sphere_visual(new_object, color.orange, radius)
+    for i in xrange(1):
+        position = numpy.array([[10.], [0.], [0.]])
+        #velocity = numpy.array([[0.], [18.], [0.]])
+        velocity = numpy.array([[0.], [0.], [0.]])
+        radius = 1.
+        mass = 10.
+        new_object = physics.Object(position, velocity, radius, mass)
+        new_visualization = create_sphere_visual(new_object, color.blue, radius)
         objects_and_visual_pairs.append([new_object, new_visualization])
-
 
     for i in xrange(1):
         position = numpy.array([[0.], [0.], [0.]])
@@ -326,6 +325,9 @@ def main():
     '''
     run physics manager tests
     '''
+    scene.height = 800
+    scene.width = 1280
+
     opts = get_opts()
     if opts['test'] == 1:
         test_1()
